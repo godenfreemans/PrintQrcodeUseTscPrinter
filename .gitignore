@@ -152,3 +152,10 @@ fabric.properties
 # Editor-based Rest Client
 #.idea/httpRequests
 
+src/main/resources/
+src/test/
+AQM100_PS/macListFold/
+AQM100_PS/src/test/
+TSPL/src/main/resources/
+TSPL/src/test/
+csvFileFold/
