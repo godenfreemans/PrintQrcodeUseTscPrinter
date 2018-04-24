@@ -1,2 +1,3 @@
 rootProject.name = 'PrintQrcodeUseTscPrinter'
 include 'TSPL'
+include 'SWA1_1'
