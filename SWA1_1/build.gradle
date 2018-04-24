@@ -1,0 +1,31 @@
+group 'com.Aperture.Godenfreemans'
+version '1.0'
+description = "SWA1 project build V" + version
+
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+mainClassName = 'com.Aperture.Godenfreemans.SWA1_1.SWA1_1'
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "com.Aperture.Godenfreemans.SWA1_1.SWA1_1"
+        attributes "Implementation-Version": 1.2
+        attributes "Main-Class": "com.Aperture.Godenfreemans.SWA1_1.SWA1_1"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.intellij:forms_rt:7.0.3'
+    compile project(':TSPL')
+}
