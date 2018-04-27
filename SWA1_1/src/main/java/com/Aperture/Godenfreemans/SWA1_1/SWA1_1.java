@@ -1,6 +1,8 @@
 package com.Aperture.Godenfreemans.SWA1_1;
 
-import com.Aperture.TSPL.*;
+import com.Aperture.TSPL.DIRECTION;
+import com.Aperture.TSPL.QRCODE;
+import com.Aperture.TSPL.TscLibDll;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -128,31 +130,32 @@ public class SWA1_1 {
         printThisFileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                if (csvData.isEmpty()) {
-                    stateTextArea.append("-MSG- Select a file which you want to print." + '\n');
-                } else {
-                    for (String bluetooth : csvData) {
-                        PrintLabel(bluetooth);
-                    }
-                }
+                new Thread(() -> PrintLabel(csvData)).run();
             }
         });
     }
 
-    private void PrintLabel(String bluetooth) {
-        stateTextArea.append("-MSG- Print " + bluetooth + ".\n");
+    private void PrintLabel(ArrayList<String> strings) {
         TscLibDll.INSTANCE.openport("TSC TTP-342M Pro");
-        TscLibDll.INSTANCE.clearbuffer();
-        TscLibDll.INSTANCE.setup("83.4", "29", "2", "8",
-                "0", "2.54", "0");
+        TscLibDll.INSTANCE.setup("72", "25", "2", "7",
+                "0", "3", "0");
         TscLibDll.INSTANCE.sendcommand(new DIRECTION(1).getCOMMAND());
-        TscLibDll.INSTANCE.sendcommand(new SHIFT(10, -20).getCOMMAND());
-        TscLibDll.INSTANCE.sendcommand(new QRCODE(690, 40, 'L', 10, 'A',
-                0, "M2", "S7", bluetooth).getCOMMAND());
-        TscLibDll.INSTANCE.printlabel("1", "1");
+
+        for (int i = 0; i < strings.size(); i += 2) {
+            TscLibDll.INSTANCE.sendcommand(new QRCODE(670, 55, 'M', 7, 'A',
+                    0, "M2", "S7", strings.get(i)).getCOMMAND());
+            stateTextArea.append("-MSG- Print " + strings.get(i) + "\n");
+            if ((i + 1) < strings.size()) {
+                TscLibDll.INSTANCE.sendcommand(new QRCODE(230, 55, 'M', 7, 'A',
+                        0, "M2", "S7", strings.get(i + 1)).getCOMMAND());
+                stateTextArea.append("-MSG- Print " + strings.get(i + 1) + "\n");
+            }
+            TscLibDll.INSTANCE.printlabel("1", "1");
+            TscLibDll.INSTANCE.clearbuffer();
+        }
+
         TscLibDll.INSTANCE.closeport();
     }
-
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("SWA1_1");
@@ -179,7 +182,8 @@ public class SWA1_1 {
     private void $$$setupUI$$$() {
         Root = new JPanel();
         Root.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
-        Root.setBorder(BorderFactory.createTitledBorder(null, ResourceBundle.getBundle("SWA1_1").getString("JLabel"), TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION));
+        Root.setBorder(BorderFactory.createTitledBorder(null, ResourceBundle.getBundle("SWA1_1")
+                                                                            .getString("JLabel"), TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION));
         final JScrollPane scrollPane1 = new JScrollPane();
         Root.add(scrollPane1, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 100), null, 0, false));
         stateTextArea = new JTextArea();
